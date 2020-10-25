@@ -9,6 +9,7 @@ public class TimeService {
 
     public String getTime() {
         Date date = new Date();
+        
         return date.toString();
     }
 
