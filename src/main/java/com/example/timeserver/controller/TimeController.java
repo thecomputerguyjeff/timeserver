@@ -1,5 +1,6 @@
 package com.example.timeserver.controller;
 
+import com.example.timeserver.model.TimeResponse;
 import com.example.timeserver.service.TimeService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,5 +24,10 @@ public class TimeController {
     @GetMapping("/epochTime")
     public Long getEpochTime() {
         return timeService.getEpochTime();
+    }
+
+    @GetMapping("/getTime")
+    public TimeResponse getTimeResponse() {
+        return timeService.getTimeResponse();
     }
 }
