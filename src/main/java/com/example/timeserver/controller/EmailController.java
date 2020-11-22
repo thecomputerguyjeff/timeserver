@@ -3,6 +3,7 @@ package com.example.timeserver.controller;
 import com.example.timeserver.config.ExternalMailConfiguration;
 import com.example.timeserver.config.FeatureSwitchConfiguration;
 import com.example.timeserver.model.ExternalMailRequest;
+import com.example.timeserver.model.SendMailRequest;
 import com.example.timeserver.model.UserPass;
 import com.example.timeserver.service.EmailService;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Base64;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/v1/email")
@@ -51,5 +53,10 @@ public class EmailController {
             return new ResponseEntity<>("Message Received and Saved", HttpStatus.OK);
         }
         return new ResponseEntity<>("Missing fields", HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("/send")
+    public Object send(@RequestBody SendMailRequest sendMailRequest) {
+        return emailService.sendEmail(sendMailRequest);
     }
 }

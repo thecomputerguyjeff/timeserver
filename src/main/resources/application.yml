@@ -3,7 +3,8 @@ server:
 
 mail:
   external:
-    ip: 192.168.0.1
+    url: ti-timeserver.herokuapp.com
+    key: letMeIn
 
 featureswitch:
   printIp: true
