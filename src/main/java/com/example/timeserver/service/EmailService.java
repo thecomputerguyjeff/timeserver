@@ -3,6 +3,7 @@ package com.example.timeserver.service;
 import com.example.timeserver.config.ExternalMailConfiguration;
 import com.example.timeserver.model.*;
 import com.example.timeserver.utils.Users;
+import model.SharedModel;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -10,6 +11,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Base64;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -69,14 +71,23 @@ public class EmailService {
             HttpEntity<ExternalMailRequest> httpEntity = new HttpEntity<>(body, headers);
 
             try {
-                restTemplate.exchange("http://" + externalMailConfiguration.getUrl() + "/api/v1/email/receiveExternalMail", HttpMethod.POST, httpEntity, Void.class);
-            }
-            catch (HttpStatusCodeException a) {
+                SharedModel sharedModel = SharedModel.builder().build();
+                ResponseEntity<SendResponse> x =
+                        restTemplate.exchange("http://" + externalMailConfiguration.getUrl() + "/api/v1/email/receiveExternalMail", HttpMethod.POST, httpEntity, SendResponse.class);
+
+                Optional<SendResponse> s = Optional.ofNullable(x.getBody());
+                Optional<String> a = Optional.empty();
+
+                return s.orElseThrow(() -> new Exception("")).getRecipient();
+
+//                return  sR.getRecipient();
+
+
+            } catch (Exception a) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-            return new ResponseEntity<>(HttpStatus.OK);
+//            return new ResponseEntity<>(HttpStatus.OK);
         }
-
     }
 
     public String validateFrom(UUID from) {

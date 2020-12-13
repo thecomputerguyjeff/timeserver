@@ -6,7 +6,9 @@ import com.example.timeserver.model.ExternalMailRequest;
 import com.example.timeserver.model.SendMailRequest;
 import com.example.timeserver.model.UserPass;
 import com.example.timeserver.service.EmailService;
+import io.swagger.annotations.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
@@ -28,10 +30,24 @@ public class EmailController {
         this.featureSwitchConfiguration = featureSwitchConfiguration;
     }
 
+    @ApiOperation(notes = "test notes", value = "this is a value")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "ok",
+                    response = String.class,
+                    examples = {@Example(value = @ExampleProperty(mediaType = "String", value = "1234-1234-12345678"))}
+            ),
+            @ApiResponse(
+                    code = 401,
+                    message = "unauthorized",
+                    response = String.class
+            )}
+    )
     @PostMapping("/login")
     public Object login(@RequestBody UserPass userPass) {
         try {
-            if(featureSwitchConfiguration.isEmailUp()) {
+            if (featureSwitchConfiguration.isEmailUp()) {
                 return new ResponseEntity<>(emailService.login(userPass), HttpStatus.OK);
             }
             return new ResponseEntity<>("Sorry, our server is down right now", HttpStatus.SERVICE_UNAVAILABLE);
@@ -42,14 +58,16 @@ public class EmailController {
 
     @PostMapping("/receiveExternalMail")
     public Object receiveExternalMail(@RequestBody ExternalMailRequest externalMailRequest,
-                                      @RequestHeader("api-key") String key) {
-        if(!"letMeIn".equals(new String(Base64.getDecoder().decode(key)))) {
+                                      @ApiParam()
+                                      @RequestHeader("api-key")
+                                              String key) {
+        if (!"letMeIn".equals(new String(Base64.getDecoder().decode(key)))) {
             return new ResponseEntity<>("Incorrect Api Key", HttpStatus.UNAUTHORIZED);
         }
-        if("NonUser".equals(externalMailRequest.getTo())) {
+        if ("NonUser".equals(externalMailRequest.getTo())) {
             return new ResponseEntity<>("User does not exist", HttpStatus.BAD_REQUEST);
         }
-        if(!externalMailRequest.getMessage().isEmpty() && !externalMailRequest.getFrom().isEmpty()) {
+        if (!externalMailRequest.getMessage().isEmpty() && !externalMailRequest.getFrom().isEmpty()) {
             return new ResponseEntity<>("Message Received and Saved", HttpStatus.OK);
         }
         return new ResponseEntity<>("Missing fields", HttpStatus.BAD_REQUEST);
