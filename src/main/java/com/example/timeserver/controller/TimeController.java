@@ -3,6 +3,7 @@
 //import com.example.timeserver.model.TimeResponse;
 //import com.example.timeserver.service.TimeService;
 //import org.springframework.web.bind.annotation.GetMapping;
+//import org.springframework.web.bind.annotation.PathVariable;
 //import org.springframework.web.bind.annotation.RequestMapping;
 //import org.springframework.web.bind.annotation.RestController;
 //
@@ -15,19 +16,19 @@
 //    public TimeController(TimeService timeService) {
 //        this.timeService = timeService;
 //    }
-//
+////
 //    @GetMapping("/time")
-//    public String getTime() {
+//    public String getTime(@PathVariable String day, @PathVariable String month) {
 //        return timeService.getTime();
 //    }
-//
-//    @GetMapping("/epochTime")
-//    public Long getEpochTime() {
-//        return timeService.getEpochTime();
-//    }
-//
-//    @GetMapping("/getTime")
-//    public TimeResponse getTimeResponse() {
-//        return timeService.getTimeResponse();
-//    }
-//}
+////
+////    @GetMapping("/epochTime")
+////    public Long getEpochTime() {
+////        return timeService.getEpochTime();
+////    }
+////
+////    @GetMapping("/getTime")
+////    public TimeResponse getTimeResponse() {
+////        return timeService.getTimeResponse();
+////    }
+////}

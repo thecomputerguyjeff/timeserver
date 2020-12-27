@@ -11,9 +11,18 @@ class TimeserverApplicationTests {
 	@Test
 	void contextLoads() {
 
-		UUID uuid = UUID.randomUUID();
-		String uuidString = uuid.toString();
+		String x = "x";
+		String y = "y";
+
+		String s = "";
+
+		s += s.format("Something %s something %s", x,y);
+
+		System.out.println(s);
+
 
 	}
+
+
 
 }

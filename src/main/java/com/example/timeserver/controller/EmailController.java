@@ -3,6 +3,7 @@ package com.example.timeserver.controller;
 import com.example.timeserver.config.ExternalMailConfiguration;
 import com.example.timeserver.config.FeatureSwitchConfiguration;
 import com.example.timeserver.model.ExternalMailRequest;
+import com.example.timeserver.model.Key;
 import com.example.timeserver.model.SendMailRequest;
 import com.example.timeserver.model.UserPass;
 import com.example.timeserver.service.EmailService;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
+import javax.xml.ws.Response;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -21,34 +23,33 @@ import java.util.UUID;
 public class EmailController {
 
     private final EmailService emailService;
-    private final ExternalMailConfiguration externalMailConfiguration;
     private final FeatureSwitchConfiguration featureSwitchConfiguration;
 
-    public EmailController(EmailService emailService, ExternalMailConfiguration externalMailConfiguration, FeatureSwitchConfiguration featureSwitchConfiguration) {
+    public EmailController(EmailService emailService, FeatureSwitchConfiguration featureSwitchConfiguration) {
         this.emailService = emailService;
-        this.externalMailConfiguration = externalMailConfiguration;
         this.featureSwitchConfiguration = featureSwitchConfiguration;
     }
 
     @ApiOperation(notes = "test notes", value = "this is a value")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    code = 200,
-                    message = "ok",
-                    response = String.class,
-                    examples = {@Example(value = @ExampleProperty(mediaType = "String", value = "1234-1234-12345678"))}
-            ),
-            @ApiResponse(
-                    code = 401,
-                    message = "unauthorized",
-                    response = String.class
-            )}
-    )
+//    @ApiResponses(value = {
+//            @ApiResponse(
+//                    code = 200,
+//                    message = "ok",
+//                    response = String.class,
+//                    examples = {@Example(value = @ExampleProperty(mediaType = "String", value = "1234-1234-12345678"))}
+//            ),
+//            @ApiResponse(
+//                    code = 401,
+//                    message = "unauthorized",
+//                    response = String.class
+//            )}
+//    )
     @PostMapping("/login")
-    public Object login(@RequestBody UserPass userPass) {
+    public ResponseEntity login(@RequestBody UserPass userPass) {
         try {
             if (featureSwitchConfiguration.isEmailUp()) {
-                return new ResponseEntity<>(emailService.login(userPass), HttpStatus.OK);
+                Key key = emailService.login(userPass);
+                return new ResponseEntity<>(key, HttpStatus.OK);
             }
             return new ResponseEntity<>("Sorry, our server is down right now", HttpStatus.SERVICE_UNAVAILABLE);
         } catch (HttpClientErrorException e) {

@@ -10,9 +10,10 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Base64;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.google.common.primitives.Ints.asList;
 
 @Service
 public class EmailService {
@@ -70,23 +71,32 @@ public class EmailService {
 
             HttpEntity<ExternalMailRequest> httpEntity = new HttpEntity<>(body, headers);
 
-            try {
-                SharedModel sharedModel = SharedModel.builder().build();
-                ResponseEntity<SendResponse> x =
-                        restTemplate.exchange("http://" + externalMailConfiguration.getUrl() + "/api/v1/email/receiveExternalMail", HttpMethod.POST, httpEntity, SendResponse.class);
+            return CallExternal(httpEntity);
+//            return new ResponseEntity<>(HttpStatus.OK);
+        }
+    }
 
-                Optional<SendResponse> s = Optional.ofNullable(x.getBody());
-                Optional<String> a = Optional.empty();
+    public Object CallExternal(HttpEntity<ExternalMailRequest> httpEntity) {
+        try {
+            SharedModel sharedModel = SharedModel.builder().build();
+            ResponseEntity<SendResponse> x =
+                    restTemplate.exchange("http://" +
+                                    externalMailConfiguration.getUrl() +
+                                    "/api/v1/email/receiveExternalMail",
+                            HttpMethod.POST,
+                            httpEntity,
+                            SendResponse.class);
 
-                return s.orElseThrow(() -> new Exception("")).getRecipient();
+            Optional<SendResponse> s = Optional.ofNullable(x.getBody());
+            Optional<String> a = Optional.empty();
+
+            return s.orElseThrow(() -> new Exception("")).getRecipient();
 
 //                return  sR.getRecipient();
 
 
-            } catch (Exception a) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-//            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception a) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -101,5 +111,18 @@ public class EmailService {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
         }
         return user;
+    }
+
+
+    public String getString (int x, String y, String z) {
+        String s = "";
+
+        if (x == 0) {
+            s += s.format("The sun is %y and the moon is %z", y, z);
+        }
+
+        return "blah";
+
+
     }
 }
